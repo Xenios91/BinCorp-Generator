@@ -62,6 +62,7 @@ def start():
 
     bin_solver = CorpusGenerator(filename, args_list)
     bin_solver.generate_corpus()
+    print("\nCorpus Generation Complete!")
 
 
 if __name__ == "__main__":

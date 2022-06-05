@@ -3,6 +3,7 @@ from typing import List
 import angr
 
 from argument_details import ArgumentDetails
+from offset_finder import OffsetFinder
 
 
 class CorpusGenerator():
@@ -11,8 +12,8 @@ class CorpusGenerator():
     '''
     filename: str
     project: angr.Project
-    arg_corpus: list[str] = list()
-    stdin_corpus: list[str] = list()
+    arg_corpus: set[str] = set()
+    stdin_corpus: set[str] = set()
     argument_details: List[ArgumentDetails] = list()
     arg_list = list()
     offsets: List[int] = list
@@ -22,6 +23,7 @@ class CorpusGenerator():
         self.project = angr.Project(
             self.filename, main_opts={'base_addr': 0}, auto_load_libs=load_libs)
         self.argument_details = arguments
+        self.offsets = OffsetFinder.generate_offsets(self.filename)
 
     def _write_corpus_to_file(self):
         arg_corpus_name = f"arg_corpus_{self.filename}.dump"
@@ -40,11 +42,10 @@ class CorpusGenerator():
     def _explore_bin(self) -> List[angr.SimulationManager]:
         state = self.project.factory.entry_state(
             args=self.arg_list)
-        offsets = [0x11cf]
 
         si_managers = []
 
-        for offset in offsets:
+        for offset in self.offsets:
             simgr = self.project.factory.simulation_manager(state)
             simgr.explore(find=offset)
             si_managers.append(simgr)
@@ -62,6 +63,8 @@ class CorpusGenerator():
 
         si_managers = self._explore_bin()
 
+        print("\nStarting Generation\n")
+
         for simgr in si_managers:
             if len(simgr.found) > 0:
                 sig = simgr.found[0]
@@ -70,19 +73,17 @@ class CorpusGenerator():
                         continue
 
                     corpus_value: str = f"argv[{ctr}] = {sig.solver.eval(arg, cast_to=bytes)}"
-                    self.arg_corpus.append(corpus_value)
-                    print(
-                        f"FOUND: argv[{ctr}] = {sig.solver.eval(arg, cast_to=bytes)}")
-                print(f"FOUND: stdin = {sig.posix.dumps(0)}")
+                    self.arg_corpus.add(corpus_value)
 
-                ctr = 0
+                print(f"Argv dump complete for offset: [{sig.addr}]!")
+
+                ctr: int = 0
                 while(True):
                     dump = sig.posix.dumps(ctr)
                     if dump != b"":
-                        self.stdin_corpus.append(str(sig.posix.dumps(ctr)))
+                        self.stdin_corpus.add(str(sig.posix.dumps(ctr)))
                         ctr = ctr + 1
                     else:
-                        print("Posix Dump Complete!")
                         break
 
         self._write_corpus_to_file()
