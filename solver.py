@@ -58,7 +58,9 @@ def start():
         arg_size = int(config.get("args_size"))
         args_list.append(ArgumentDetails(arg_size))
 
-    bin_solver = CorpusGenerator("a.out", args_list)
+    filename: str = config.get("binaryfile")
+
+    bin_solver = CorpusGenerator(filename, args_list)
     bin_solver.generate_corpus()
 
 

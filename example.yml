@@ -1,2 +1,3 @@
+binaryfile: "a.out"
 arg_count: 2
 args_size: 256 #byte size

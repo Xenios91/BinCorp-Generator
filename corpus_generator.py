@@ -15,6 +15,7 @@ class CorpusGenerator():
     stdin_corpus: list[str] = list()
     argument_details: List[ArgumentDetails] = list()
     arg_list = list()
+    offsets: List[int] = list
 
     def __init__(self, file: str, arguments: list, load_libs=False) -> None:
         self.filename = file
@@ -36,6 +37,20 @@ class CorpusGenerator():
                 output.write(value)
                 output.write("\n")
 
+    def _explore_bin(self) -> List[angr.SimulationManager]:
+        state = self.project.factory.entry_state(
+            args=self.arg_list)
+        offsets = [0x11cf]
+
+        si_managers = []
+
+        for offset in offsets:
+            simgr = self.project.factory.simulation_manager(state)
+            simgr.explore(find=offset)
+            si_managers.append(simgr)
+
+        return si_managers
+
     def generate_corpus(self):
         '''
         Generates a corpus based on the supplied binary executable and arguments assigned
@@ -45,32 +60,29 @@ class CorpusGenerator():
         for arg in self.argument_details:
             self.arg_list.append(arg.get_arg())
 
-        state = self.project.factory.entry_state(
-            args=self.arg_list)
+        si_managers = self._explore_bin()
 
-        simgr = self.project.factory.simulation_manager(state)
-        simgr.explore(find=0x11cf)
+        for simgr in si_managers:
+            if len(simgr.found) > 0:
+                sig = simgr.found[0]
+                for ctr, arg in enumerate(self.arg_list):
+                    if ctr == 0:
+                        continue
 
-        if len(simgr.found) > 0:
-            sig = simgr.found[0]
-            for ctr, arg in enumerate(self.arg_list):
-                if ctr == 0:
-                    continue
+                    corpus_value: str = f"argv[{ctr}] = {sig.solver.eval(arg, cast_to=bytes)}"
+                    self.arg_corpus.append(corpus_value)
+                    print(
+                        f"FOUND: argv[{ctr}] = {sig.solver.eval(arg, cast_to=bytes)}")
+                print(f"FOUND: stdin = {sig.posix.dumps(0)}")
 
-                corpus_value: str = str(sig.solver.eval(arg, cast_to=bytes))
-                self.arg_corpus.append(corpus_value)
-                print(
-                    f"FOUND: argv[{ctr}] = {sig.solver.eval(arg, cast_to=bytes)}")
-            print(f"FOUND: stdin = {sig.posix.dumps(0)}")
+                ctr = 0
+                while(True):
+                    dump = sig.posix.dumps(ctr)
+                    if dump != b"":
+                        self.stdin_corpus.append(str(sig.posix.dumps(ctr)))
+                        ctr = ctr + 1
+                    else:
+                        print("Posix Dump Complete!")
+                        break
 
-            ctr = 0
-            while():
-                dump = sig.posix.dumps(ctr)
-                if dump != b"":
-                    self.stdin_corpus.append(str(sig.posix.dumps(ctr)))
-                    ctr = ctr + 1
-                else:
-                    print("Posix Dump Complete!")
-                    break
-
-            self._write_corpus_to_file()
+        self._write_corpus_to_file()
