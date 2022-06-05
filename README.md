@@ -5,7 +5,7 @@
 - Language: Python 3.10
 - Description: Analyzes binary executables and generates a test corpus to reach every basic block detected in non library/Shared object sections of the text.
 
-## Installation/Compilation
+## Setup
 - Requires Python 3.10
 - DevContainer included within the project.
 - Install requirements ```pip install -r requirements.txt```
