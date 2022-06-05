@@ -8,6 +8,7 @@
 ## Installation/Compilation
 - Requires Python 3.10
 - DevContainer included within the project.
+- Install requirements ```pip install -r requirements.txt```
 
 ## Utilization
 - Set the binary file and argument configuration within a yaml file, use the -config flag to set the configuration. ```-config=config.yml```
