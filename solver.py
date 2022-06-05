@@ -1,3 +1,7 @@
+'''
+Tool for generating binary executables corpus for dynamic analysis
+'''
+
 import argparse
 from typing import List
 
