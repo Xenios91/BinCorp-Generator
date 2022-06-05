@@ -1,0 +1,1 @@
+# BinCorp-Generator
