@@ -3,12 +3,12 @@ Tool for generating binary executables corpus for dynamic analysis
 '''
 
 import argparse
+import logging
 from typing import List
 
 import yaml
 
-from argument_details import ArgumentDetails
-from corpus_generator import CorpusGenerator
+from corpus_generator import ArgumentDetails, CorpusGenerator
 
 
 def get_args():
@@ -16,12 +16,12 @@ def get_args():
     Gets cli args for this tools
     '''
 
-    parser = argparse.ArgumentParser(
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(
         description='Generate a test corpus for binary analysis tools')
     parser.add_argument(
         '--config', type=str, required=True, help='The config yaml file to use for argument configuration')
 
-    args = parser.parse_args()
+    args: argparse.Namespace = parser.parse_args()
     return args
 
 
@@ -51,22 +51,27 @@ def start():
     '''
     Initiates the program
     '''
-
     _print_logo()
-    args = get_args()
-    config_file_name = args.config
-    config = read_config(config_file_name)
+    logging.getLogger('angr').setLevel('ERROR')
+    logging.getLogger('cle').setLevel('ERROR')
+    args: argparse.Namespace = get_args()
 
-    args_list: List[ArgumentDetails] = list()
+    print("Loading config...", end=" ")
+
+    config_file_name: str = args.config
+    config: dict = read_config(config_file_name)
+
+    args_list: List[ArgumentDetails] = []
     for _ in range(config.get("arg_count")):
-        arg_size = int(config.get("args_size"))
+        arg_size: int = int(config.get("args_size"))
         args_list.append(ArgumentDetails(arg_size))
 
     filename: str = config.get("binaryfile")
 
-    bin_solver = CorpusGenerator(filename, args_list)
+    print("Config Loaded!")
+
+    bin_solver: CorpusGenerator = CorpusGenerator(filename, args_list)
     bin_solver.generate_corpus()
-    print("\nCorpus Generation Complete!")
 
 
 if __name__ == "__main__":
