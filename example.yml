@@ -1,4 +1,4 @@
 binaryfile: "a.out" #file name
 arg_count: 2 #number of CLI arguments
-args_size: 256 #byte size
+args_size: 256 #byte size of the CLI arguments (larger is better if you are unsure)
 max_offsets: -1 #max number of offsets to search, set this to avoid resource exhaustion, -1 == unlimited
