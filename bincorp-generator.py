@@ -20,6 +20,8 @@ def get_args():
         description='Generate a test corpus for binary analysis tools')
     parser.add_argument(
         '--config', type=str, required=True, help='The config yaml file to use for argument configuration')
+    parser.add_argument(
+        '--verbose', required=False, action='store_true', help='If set all logging information will be sent to STDOUT')
 
     args: argparse.Namespace = parser.parse_args()
     return args
@@ -52,9 +54,13 @@ def start():
     Initiates the program
     '''
     _print_logo()
-    logging.getLogger('angr').setLevel('ERROR')
-    logging.getLogger('cle').setLevel('ERROR')
     args: argparse.Namespace = get_args()
+
+    if args.verbose:
+        logging.getLogger('angr').setLevel('INFO')
+    else:
+        logging.getLogger('angr').setLevel('ERROR')
+        logging.getLogger('cle').setLevel('ERROR')
 
     print("Loading config...", end=" ")
 
