@@ -16,4 +16,11 @@
 - The output files containing both stdin and CLI args for reaching multiple paths will be output in two text files ending with .dump
 - Values and their explaination for configuration can be found in the example file: ```example.yml```
 
+## config file
+- binaryfile: "myBin" #file name
+- arg_count: 2 #number of CLI arguments
+- args_size: 256 #byte size
+- max_offsets: -1 #max number of offsets to search, set this to avoid resource exhaustion, -1 == unlimited
+- offsets: #if array set, these offsets will only be searched
+
 
