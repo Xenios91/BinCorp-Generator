@@ -2,6 +2,7 @@
 Module for defining classes related to corpus generation
 '''
 
+import random
 from typing import List
 
 import angr
@@ -64,13 +65,15 @@ class CorpusGenerator():
     stdin_corpus: set[str] = set()
     argument_details: List[ArgumentDetails] = []
     arg_list = []
-    offsets: List[int] = list
+    offsets: List[int] = []
+    max_offsets: int
 
-    def __init__(self, file: str, arguments: list) -> None:
+    def __init__(self, file: str, arguments: list, max_offsets: int) -> None:
         self.filename = file
         self.project = angr.Project(
             self.filename, main_opts={'base_addr': 0}, auto_load_libs=False)
         self.argument_details = arguments
+        self.max_offsets = max_offsets
         self.offsets = OffsetFinder.generate_offsets(self.filename)
 
     def _write_corpus_to_file(self):
@@ -94,8 +97,12 @@ class CorpusGenerator():
 
         si_managers: List[angr.SimulationManager] = []
 
-        for ctr in tqdm(range(len(self.offsets))):
-            offset: int = self.offsets[ctr]
+        range_size = max(len(self.offsets), self.max_offsets)
+        offsets_copy = self.offsets.copy()
+
+        for _ in tqdm(range(range_size)):
+            offset: int = random.choice(offsets_copy)
+            offsets_copy.remove(offset)
             simgr = self.project.factory.simulation_manager(state)
             simgr.explore(find=offset)
             si_managers.append(simgr)
@@ -115,7 +122,7 @@ class CorpusGenerator():
 
         si_managers: List[angr.SimulationManager] = self._explore_bin()
 
-        print("\nStarting Corpus Generation...\n")
+        print("Starting Corpus Generation...\n")
 
         for i in tqdm(range(len(si_managers))):
             simgr: angr.SimulationManager = si_managers[i]
