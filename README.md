@@ -3,7 +3,7 @@
 ## General Information
 - Author: Corey Hartman
 - Language: Python 3.10
-- Description: Analyzes binary executables and generates a test corpus to reach every basic block detected in non library/Shared object parts of the bin's text section.
+- Description: Analyzes binary executables and can generate a test corpus for defined instruction paths or can generate a test corpus to reach every basic block detected in non library/Shared object parts of the bin's text section.
 
 ## Setup
 - Requires Python 3.10
