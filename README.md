@@ -19,10 +19,10 @@
 ## Config File
 The config file has a few values to set the following are the descriptions:
 ```
-- binaryfile: "myBin" #file name
-- arg_count: 2 #number of CLI arguments
-- args_size: 256 #byte size
-- max_offsets: -1 #max number of offsets to search, set this to avoid resource exhaustion, -1 == unlimited
-- offsets: #if array set, these offsets will only be searched
+binaryfile: "myBin" #file name
+arg_count: 2 #number of CLI arguments
+args_size: 256 #byte size
+max_offsets: -1 #max number of offsets to search, set this to avoid resource exhaustion, -1 == unlimited
+offsets: #if array set, these offsets will only be searched
 ```
 
