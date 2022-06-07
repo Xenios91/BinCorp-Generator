@@ -17,6 +17,7 @@
 - Values and their explaination for configuration can be found in the example file: ```example.yml```
 
 ## Config File
+The config file has a few values to set the following are the descriptions:
 - binaryfile: "myBin" #file name
 - arg_count: 2 #number of CLI arguments
 - args_size: 256 #byte size
