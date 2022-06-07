@@ -68,13 +68,16 @@ class CorpusGenerator():
     offsets: List[int] = []
     max_offsets: int
 
-    def __init__(self, file: str, arguments: list, max_offsets: int) -> None:
+    def __init__(self, file: str, arguments: list, max_offsets: int, offsets: List[int]) -> None:
         self.filename = file
         self.project = angr.Project(
             self.filename, main_opts={'base_addr': 0}, auto_load_libs=False)
         self.argument_details = arguments
         self.max_offsets = max_offsets
-        self.offsets = OffsetFinder.generate_offsets(self.filename)
+        if offsets is None:
+            self.offsets = OffsetFinder.generate_offsets(self.filename)
+        else:
+            self.offsets = offsets
 
     def _write_corpus_to_file(self):
         arg_corpus_name: str = f"arg_corpus_{self.filename}.dump"
