@@ -74,7 +74,7 @@ class CorpusGenerator():
             self.filename, main_opts={'base_addr': 0}, auto_load_libs=False)
         self.argument_details = arguments
         self.max_offsets = max_offsets
-        if offsets is None:
+        if offsets is None or len(offsets) == 0:
             self.offsets = OffsetFinder.generate_offsets(self.filename)
         else:
             self.offsets = offsets
