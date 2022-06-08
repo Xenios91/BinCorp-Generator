@@ -25,6 +25,6 @@ binaryfile: "myBin" #file name
 arg_count: 2 #number of CLI arguments
 args_size: 256 #byte size
 max_offsets: -1 #max number of offsets to search, set this to avoid resource exhaustion, -1 == unlimited
-offsets: [] #if array set, these offsets will only be searched
+offsets: #an array of offets, 'function' or 'basic_block' is available, if the word function is used, the tool will return inputs to reach each function,  if basic block is set, the tool will return input to reach all basic blocks, and an array of offsets will only look for those defined instruction locations
 ```
 
