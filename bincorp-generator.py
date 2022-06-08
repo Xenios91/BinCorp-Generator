@@ -73,13 +73,14 @@ def start():
         args_list.append(ArgumentDetails(arg_size))
 
     filename: str = config.get("binaryfile")
-    offsets: list[int] = config.get("offsets")
+
+    discovery = config.get("discovery")
     max_offsets = config.get("max_offsets")
 
     print("Config Loaded!")
 
     bin_solver: CorpusGenerator = CorpusGenerator(
-        filename, args_list, max_offsets, offsets)
+        filename, args_list, max_offsets, discovery)
     bin_solver.generate_corpus()
 
 

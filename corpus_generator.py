@@ -17,7 +17,7 @@ class OffsetFinder():
     _offsets: List[int] = []
 
     @staticmethod
-    def generate_offsets(filename: str) -> List[int]:
+    def generate_basic_block_offsets(filename: str) -> List[int]:
         '''
         Static method used to generate basic block offsets
         '''
@@ -34,6 +34,22 @@ class OffsetFinder():
                 instruction_offset = abs(func_node.addr - block.addr)
                 OffsetFinder._offsets.append(
                     function_offset + instruction_offset)
+        return OffsetFinder._offsets
+
+    @staticmethod
+    def generate_function_offsets(filename: str) -> List[int]:
+        '''
+        Static method used to generate function offsets
+        '''
+
+        project: angr.Project = angr.Project(filename, auto_load_libs=False)
+        cfg = project.analyses.CFGFast()
+        cfg.normalize()
+        for func_node in cfg.functions.values():
+            if func_node.name.startswith("__"):
+                continue
+
+            OffsetFinder._offsets.append(func_node.offset)
         return OffsetFinder._offsets
 
 
@@ -68,16 +84,24 @@ class CorpusGenerator():
     offsets: List[int] = []
     max_offsets: int
 
-    def __init__(self, file: str, arguments: list, max_offsets: int, offsets: List[int]) -> None:
+    def __init__(self, file: str, arguments: list, max_offsets: int, discovery) -> None:
         self.filename = file
         self.project = angr.Project(
             self.filename, main_opts={'base_addr': 0}, auto_load_libs=False)
         self.argument_details = arguments
         self.max_offsets = max_offsets
-        if offsets is None or len(offsets) == 0:
-            self.offsets = OffsetFinder.generate_offsets(self.filename)
-        else:
-            self.offsets = offsets
+        if discovery == "basic_block":
+            self.offsets = OffsetFinder.generate_basic_block_offsets(
+                self.filename)
+            return
+        if discovery == "function":
+            self.offsets = OffsetFinder.generate_function_offsets(
+                self.filename)
+            return
+        if isinstance(discovery, list):
+            self.offsets = discovery
+            return
+        raise Exception(f"Invalid discovery type: {discovery}")
 
     def _write_corpus_to_file(self):
         arg_corpus_name: str = f"arg_corpus_{self.filename}.dump"
