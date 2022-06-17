@@ -104,8 +104,8 @@ class CorpusGenerator():
         raise Exception(f"Invalid discovery type: {discovery}")
 
     def _write_corpus_to_file(self):
-        arg_corpus_name: str = f"arg_corpus_{self.filename}.dump"
-        stdin_corpus_name: str = f"stdin_corpus_{self.filename}.dump"
+        arg_corpus_name: str = f"{self.filename}_arg_corpus.dump"
+        stdin_corpus_name: str = f"{self.filename}_stdin_corpus.dump"
 
         with open(arg_corpus_name, 'w', encoding='utf=8') as output:
             for value in self.arg_corpus:
