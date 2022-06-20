@@ -1,5 +1,7 @@
 # BinCorp-Generator
 
+[![CodeQL](https://github.com/Xenios91/BinCorp-Generator/actions/workflows/codeql-analysis.yml/badge.svg)](https://github.com/Xenios91/BinCorp-Generator/actions/workflows/codeql-analysis.yml)
+
 ## General Information
 - Author: Corey Hartman
 - Language: Python 3.10
