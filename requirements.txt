@@ -22,7 +22,7 @@ pefile==2022.5.30
 plumbum==1.7.2
 ply==3.11
 progressbar2==4.0.0
-protobuf==3.20.1
+protobuf==3.20.2
 psutil==5.9.1
 pycparser==2.21
 pyelftools==0.28
