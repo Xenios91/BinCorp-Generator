@@ -30,7 +30,7 @@ PySMT==0.9.6.dev11
 python-utils==3.3.3
 pyvex==9.2.6
 PyYAML==6.0
-rpyc==5.1.0
+rpyc==6.0.0
 smmap==5.0.0
 sortedcontainers==2.4.0
 sympy==1.10.1
