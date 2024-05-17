@@ -34,6 +34,6 @@ rpyc==5.1.0
 smmap==5.0.0
 sortedcontainers==2.4.0
 sympy==1.10.1
-tqdm==4.64.0
+tqdm==4.66.3
 unicorn==1.0.2rc4
 z3-solver==4.8.17.0
